@@ -208,16 +208,14 @@ import { motion } from "framer-motion";
 import "./BlochSphereSimulator.css";
 
 export default function App() {
-  const [theta, setTheta] = useState(0);  // Polar angle
-  const [phi, setPhi] = useState(0);      // Azimuthal angle
+  const [theta, setTheta] = useState(0);
+  const [phi, setPhi] = useState(0);
   const [currentGate, setCurrentGate] = useState(null);
 
-  const toDegrees = (radians) => (radians * 180) / Math.PI;
+  const toDegrees = (r) => (r * 180) / Math.PI;
 
-  // Apply gates (functional updates avoid stale state)
   const applyGate = (gate) => {
     setCurrentGate(gate);
-
     if (gate === "X") setTheta(() => Math.PI);
     if (gate === "H") setTheta(() => Math.PI / 2);
     if (gate === "Z") setPhi((p) => p + Math.PI);
@@ -227,13 +225,11 @@ export default function App() {
     }
     if (gate === "S") setPhi((p) => p + Math.PI / 2);
     if (gate === "T") setPhi((p) => p + Math.PI / 4);
-
     if (gate === "Rx") setTheta((t) => t + Math.PI / 4);
     if (gate === "Ry") setTheta((t) => t + Math.PI / 4);
     if (gate === "Rz") setPhi((p) => p + Math.PI / 4);
   };
 
-  // Derived cartesian coords
   const x = Math.sin(theta) * Math.cos(phi);
   const y = Math.sin(theta) * Math.sin(phi);
   const z = Math.cos(theta);
@@ -243,7 +239,7 @@ export default function App() {
       <h1 className="bloch-title">Quantum Gates Visualizer</h1>
 
       <div className="bloch-grid">
-        {/* === SIDEBAR: gates + sliders + coords === */}
+        {/* === SIDEBAR === */}
         <aside className="bloch-panel bloch-panel-sticky">
           <h2 className="bloch-subtitle">Gates</h2>
           <GateControls applyGate={applyGate} />
@@ -289,42 +285,48 @@ export default function App() {
           </div>
         </aside>
 
-        {/* === MAIN: 3D sphere + equation + info === */}
+        {/* === MAIN === */}
         <section className="bloch-visual">
-          <div className="bloch-canvas-wrap">
+          <div className="bloch-canvas-wrap neon">
             <Canvas camera={{ position: [3, 3, 3] }}>
               <ambientLight intensity={0.5} />
               <pointLight position={[5, 5, 5]} />
               <OrbitControls />
 
-              {/* Sphere */}
               <Sphere args={[1, 64, 64]}>
                 <meshStandardMaterial color="#00FFFF" transparent opacity={0.15} />
               </Sphere>
 
-              {/* Axes */}
               <Line points={[[0, 0, 0], [1.5, 0, 0]]} color="red" />
-              <Html position={[1.7, 0, 0]} center><span className="axis-label">X-axis</span></Html>
+              <Html position={[1.7, 0, 0]} center>
+                <span className="axis-label">X-axis</span>
+              </Html>
 
               <Line points={[[0, 0, 0], [0, 1.5, 0]]} color="green" />
-              <Html position={[0, 1.7, 0]} center><span className="axis-label">Y-axis</span></Html>
+              <Html position={[0, 1.7, 0]} center>
+                <span className="axis-label">Y-axis</span>
+              </Html>
 
               <Line points={[[0, 0, 0], [0, 0, 1.5]]} color="blue" />
-              <Html position={[0, 0, 1.7]} center><span className="axis-label">Z-axis</span></Html>
+              <Html position={[0, 0, 1.7]} center>
+                <span className="axis-label">Z-axis</span>
+              </Html>
 
-              {/* State vector */}
               <Line points={[[0, 0, 0], [x, y, z]]} color="orange" lineWidth={3} />
 
-              {/* Poles */}
-              <Html position={[0, 0, 1.1]} center><div className="state-label">|0⟩</div></Html>
-              <Html position={[0, 0, -1.1]} center><div className="state-label">|1⟩</div></Html>
+              <Html position={[0, 0, 1.1]} center>
+                <div className="state-label">|0⟩</div>
+              </Html>
+              <Html position={[0, 0, -1.1]} center>
+                <div className="state-label">|1⟩</div>
+              </Html>
 
-              {/* Equator */}
               <Line points={[[1, 0, 0], [-1, 0, 0]]} color="yellow" />
               <Line points={[[0, 1, 0], [0, -1, 0]]} color="yellow" />
-              <Html position={[1.2, 0, 0]} center><div className="state-label">Superposition Plane</div></Html>
+              <Html position={[1.2, 0, 0]} center>
+                <div className="state-label">Superposition Plane</div>
+              </Html>
 
-              {/* Live angle hints */}
               <Html position={[x / 2, y / 2, 0]} center>
                 <div className="state-label">ϕ = {toDegrees(phi).toFixed(1)}°</div>
               </Html>
@@ -334,12 +336,14 @@ export default function App() {
             </Canvas>
           </div>
 
-          <motion.div className="bloch-equation" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <motion.div className="bloch-equation card" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <h2>Quantum State Representation</h2>
             <p>|ψ⟩ = cos(θ/2)|0⟩ + e<sup>iφ</sup> sin(θ/2)|1⟩</p>
           </motion.div>
 
-          <GateInfo gate={currentGate} stateVector={[theta, phi]} />
+          <div className="card">
+            <GateInfo gate={currentGate} stateVector={[theta, phi]} />
+          </div>
         </section>
       </div>
     </div>
