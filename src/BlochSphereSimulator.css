@@ -119,14 +119,12 @@
 /* ---------- THEME ---------- */
 :root {
   --bg: #0b1222;
-  --bg2: #0f172a;
   --panel: #1e293b;
   --panel-2: #233246;
   --text: #e6f0ff;
   --muted: #c5d3f0;
   --accent: #00e6e6;
-  --accent-2: #12f7f7;
-  --glow: rgba(0, 230, 230, 0.25);
+  --glow: rgba(0, 230, 230, 0.28);
 }
 
 *,
@@ -139,15 +137,12 @@
   background: radial-gradient(1000px 600px at 50% -10%, rgba(0,255,255,0.08), transparent), var(--bg);
   color: var(--text);
   padding: 24px;
-  display: grid;
-  grid-auto-rows: min-content auto;
-  gap: 16px;
 }
 
 .bloch-title {
   text-align: center;
-  margin: 0;
-  font-size: 2rem;
+  margin: 0 0 16px;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
   color: var(--accent);
   text-shadow: 0 0 10px var(--glow);
 }
@@ -159,35 +154,14 @@
   gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
   align-items: start;
 }
 
 @media (max-width: 960px) {
-  .bloch-grid {
-    grid-template-columns: 1fr;
-  }
+  .bloch-grid { grid-template-columns: 1fr; }
 }
 
-/* ---------- CARDS & GLOW ---------- */
-.card {
-  background: var(--panel);
-  border: 1px solid #192536;
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 10px 30px rgba(0,0,0,0.35);
-}
-
-.neon {
-  border-radius: 16px;
-  outline: 2px solid var(--accent);
-  box-shadow:
-    0 0 0 3px rgba(0, 230, 230, 0.2) inset,
-    0 0 24px var(--glow),
-    0 12px 40px rgba(0,0,0,0.5);
-}
-
-/* ---------- SIDEBAR ---------- */
+/* ---------- SIDEBAR (unchanged) ---------- */
 .bloch-panel {
   background: var(--panel);
   border: 1px solid #1a2a3e;
@@ -202,7 +176,6 @@
 .bloch-panel-sticky {
   position: sticky;
   top: 18px;
-  align-self: start;
   max-height: calc(100dvh - 36px);
   overflow: auto;
   scrollbar-width: thin;
@@ -210,9 +183,9 @@
 }
 
 .bloch-subtitle {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   color: var(--accent);
-  margin: 4px 0 8px;
+  margin: 4px 0 6px;
   text-shadow: 0 0 8px var(--glow);
 }
 
@@ -222,12 +195,7 @@
   margin: 8px 0;
 }
 
-/* Controls inside the sidebar */
-.bloch-control {
-  display: grid;
-  gap: 6px;
-  margin: 8px 0;
-}
+.bloch-control { display: grid; gap: 6px; margin: 8px 0; }
 .bloch-control label { font-weight: 600; color: var(--muted); }
 .bloch-control input[type="range"] { width: 100%; accent-color: var(--accent); }
 
@@ -238,41 +206,61 @@
   padding: 12px;
 }
 .bloch-full-coords h3 { margin: 0 0 8px; color: var(--accent); }
-.bloch-full-coords ul {
-  margin: 0;
-  padding-left: 1em;
-  list-style: disc;
-  line-height: 1.4;
-}
+.bloch-full-coords ul { margin: 0; padding-left: 1em; list-style: disc; }
 
-/* ---------- MAIN AREA ---------- */
+/* ---------- MAIN PANE: FIXES ---------- */
 .bloch-visual {
+  /* KEY FIXES: no extra background/padding; use a clean vertical stack */
   display: grid;
-  grid-template-rows: minmax(420px, 56vh) auto auto; /* Canvas grows; cards follow */
+  grid-template-rows: auto auto auto;  /* canvas, equation, info */
   gap: 14px;
-  min-height: 560px;
+  min-height: 0;   /* allows children to size themselves */
 }
 
 .bloch-canvas-wrap {
-  background: linear-gradient(180deg, #0d1526, #0b1322);
+  /* canvas container with neon frame */
+  border-radius: 14px;
+  overflow: hidden;
+  outline: 2px solid var(--accent);
+  box-shadow:
+    0 0 0 3px rgba(0, 230, 230, 0.18) inset,
+    0 0 24px var(--glow);
+  background: linear-gradient(180deg, #0f1a2f, #0b1322);
   border: 1px solid #1b2c42;
-  border-radius: 16px;
-  overflow: hidden;            /* keeps glow tidy inside */
+
+  /* KEY FIXES: predictable height on all screens */
+  height: clamp(360px, 48vh, 560px);
+}
+.bloch-canvas-wrap > canvas,
+.bloch-canvas-wrap .react-three-fiber,
+.bloch-canvas-wrap > div {
+  /* ensure Three.js canvas fills the wrapper */
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }
 
-/* Equation & info cards */
+/* Equation + GateInfo cards (full-width, no overflow) */
+.card,
 .bloch-equation {
-  text-align: center;
+  background: var(--panel);
+  border: 1px solid #192536;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 10px 30px rgba(0,0,0,0.35);
+  width: 100%;
 }
+
+.bloch-equation { text-align: center; }
 .bloch-equation h2 {
   color: var(--accent);
-  margin: 0 0 8px;
+  margin: 0 0 6px;
 }
 
-/* ---------- Labels placed with <Html> in the Canvas ---------- */
+/* ---------- Drei <Html> label polish ---------- */
 .axis-label {
   color: #fff;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   background: rgba(0,0,0,0.7);
   padding: 2px 6px;
   border-radius: 6px;
@@ -280,15 +268,15 @@
 }
 
 .state-label {
-  color: var(--accent-2);
+  color: var(--accent);
   background: rgba(0,0,0,0.82);
   padding: 2px 8px;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   white-space: nowrap;
 }
 
-/* ---------- GateControls quick polish (generic) ---------- */
+/* ---------- Buttons/selects inside sidebar (generic polish) ---------- */
 .bloch-panel select,
 .bloch-panel button {
   background: #132030;
@@ -300,12 +288,8 @@
   transition: box-shadow .2s ease, transform .06s ease;
 }
 .bloch-panel select:focus,
-.bloch-panel button:focus {
-  box-shadow: 0 0 0 3px rgba(0, 230, 230, 0.25);
-}
-.bloch-panel button {
-  cursor: pointer;
-  font-weight: 600;
-}
+.bloch-panel button:focus { box-shadow: 0 0 0 3px rgba(0, 230, 230, 0.25); }
+.bloch-panel button { cursor: pointer; font-weight: 600; }
 .bloch-panel button:hover { transform: translateY(-1px); }
 .bloch-panel button:active { transform: translateY(0); }
+
