@@ -116,140 +116,196 @@
  */
 
 
+/* ---------- THEME ---------- */
+:root {
+  --bg: #0b1222;
+  --bg2: #0f172a;
+  --panel: #1e293b;
+  --panel-2: #233246;
+  --text: #e6f0ff;
+  --muted: #c5d3f0;
+  --accent: #00e6e6;
+  --accent-2: #12f7f7;
+  --glow: rgba(0, 230, 230, 0.25);
+}
 
-/* Page shell */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+/* ---------- PAGE SHELL ---------- */
 .bloch-container {
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #0f172a, #000);
-  color: #fff;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  min-height: 100dvh;
+  background: radial-gradient(1000px 600px at 50% -10%, rgba(0,255,255,0.08), transparent), var(--bg);
+  color: var(--text);
+  padding: 24px;
+  display: grid;
+  grid-auto-rows: min-content auto;
+  gap: 16px;
 }
 
 .bloch-title {
-  font-size: 2rem;
-  color: #0ff;
   text-align: center;
-  margin: 0 0 0.5rem;
+  margin: 0;
+  font-size: 2rem;
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--glow);
 }
 
-/* Grid: fixed sidebar + flexible main */
+/* ---------- LAYOUT ---------- */
 .bloch-grid {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 16px;
+  grid-template-columns: 340px minmax(0, 1fr); /* fixed sidebar + flexible main */
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
   align-items: start;
 }
 
-/* Stack on small screens */
-@media (max-width: 820px) {
+@media (max-width: 960px) {
   .bloch-grid {
     grid-template-columns: 1fr;
   }
 }
 
-/* Sidebar */
+/* ---------- CARDS & GLOW ---------- */
+.card {
+  background: var(--panel);
+  border: 1px solid #192536;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 10px 30px rgba(0,0,0,0.35);
+}
+
+.neon {
+  border-radius: 16px;
+  outline: 2px solid var(--accent);
+  box-shadow:
+    0 0 0 3px rgba(0, 230, 230, 0.2) inset,
+    0 0 24px var(--glow),
+    0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* ---------- SIDEBAR ---------- */
 .bloch-panel {
-  background: #1e293b;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 0 10px #0ff4;
+  background: var(--panel);
+  border: 1px solid #1a2a3e;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 10px;
 }
 
 .bloch-panel-sticky {
   position: sticky;
-  top: 12px;
-  max-height: calc(100vh - 24px);
+  top: 18px;
+  align-self: start;
+  max-height: calc(100dvh - 36px);
   overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
 }
 
 .bloch-subtitle {
-  color: #0ff;
-  font-size: 1.1rem;
-  margin: 0.2rem 0 0.4rem;
+  font-size: 1.2rem;
+  color: var(--accent);
+  margin: 4px 0 8px;
+  text-shadow: 0 0 8px var(--glow);
 }
 
 .bloch-sep {
   border: none;
   border-top: 1px solid rgba(255,255,255,0.12);
-  margin: 0.6rem 0;
+  margin: 8px 0;
 }
 
+/* Controls inside the sidebar */
 .bloch-control {
   display: grid;
   gap: 6px;
   margin: 8px 0;
 }
-
-.bloch-control label {
-  font-weight: 600;
-}
-
-.bloch-control input[type="range"] {
-  width: 100%;
-  accent-color: #0ff;
-}
+.bloch-control label { font-weight: 600; color: var(--muted); }
+.bloch-control input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 .bloch-full-coords {
-  background: #334155;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  text-align: left;
+  background: var(--panel-2);
+  border: 1px solid #1b2a3d;
+  border-radius: 10px;
+  padding: 12px;
+}
+.bloch-full-coords h3 { margin: 0 0 8px; color: var(--accent); }
+.bloch-full-coords ul {
+  margin: 0;
+  padding-left: 1em;
+  list-style: disc;
+  line-height: 1.4;
 }
 
-/* Main area */
+/* ---------- MAIN AREA ---------- */
 .bloch-visual {
-  background: #0b1020;
-  border: 1px solid #1f2a44;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 0 10px #0ff4;
-
   display: grid;
-  grid-template-rows: 1fr auto auto; /* Canvas grows; equation & info below */
-  gap: 12px;
+  grid-template-rows: minmax(420px, 56vh) auto auto; /* Canvas grows; cards follow */
+  gap: 14px;
   min-height: 560px;
 }
 
 .bloch-canvas-wrap {
-  border-radius: 10px;
-  overflow: hidden;
-  background: radial-gradient(1200px 400px at 50% -10%, rgba(120,119,198,0.2), transparent), #0b1020;
+  background: linear-gradient(180deg, #0d1526, #0b1322);
+  border: 1px solid #1b2c42;
+  border-radius: 16px;
+  overflow: hidden;            /* keeps glow tidy inside */
 }
 
-/* Equation card */
+/* Equation & info cards */
 .bloch-equation {
-  background: #1e293b;
-  padding: 1rem;
-  border-radius: 10px;
   text-align: center;
-  box-shadow: 0 0 10px #0ff4;
 }
-
 .bloch-equation h2 {
-  color: #0ff;
-  margin: 0 0 0.4rem;
+  color: var(--accent);
+  margin: 0 0 8px;
 }
 
-/* Labels drawn with drei <Html> */
+/* ---------- Labels placed with <Html> in the Canvas ---------- */
 .axis-label {
   color: #fff;
   font-size: 0.8rem;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 2px 4px;
-  border-radius: 4px;
+  background: rgba(0,0,0,0.7);
+  padding: 2px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
 }
 
 .state-label {
-  color: #0ff;
-  background: rgba(0, 0, 0, 0.85);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  color: var(--accent-2);
+  background: rgba(0,0,0,0.82);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
+
+/* ---------- GateControls quick polish (generic) ---------- */
+.bloch-panel select,
+.bloch-panel button {
+  background: #132030;
+  color: var(--text);
+  border: 1px solid rgba(0, 230, 230, 0.5);
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+  transition: box-shadow .2s ease, transform .06s ease;
+}
+.bloch-panel select:focus,
+.bloch-panel button:focus {
+  box-shadow: 0 0 0 3px rgba(0, 230, 230, 0.25);
+}
+.bloch-panel button {
+  cursor: pointer;
+  font-weight: 600;
+}
+.bloch-panel button:hover { transform: translateY(-1px); }
+.bloch-panel button:active { transform: translateY(0); }
